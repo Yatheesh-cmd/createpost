@@ -14,10 +14,12 @@ const CreatePost = () => {
   const [showPosts, setShowPosts] = useState(false);
   const [tagsError, setTagsError] = useState('');
 
+  // Use environment variable for backend URL, fallback to production URL
+  const API_URL = process.env.REACT_APP_API_URL || 'https://backendforpost.onrender.com/api/posts';
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'tags') {
-      // Validate tags: only allow comma-separated words (letters, numbers, hyphens, underscores)
       const tagsRegex = /^([a-zA-Z0-9_-]+)(,\s*[a-zA-Z0-9_-]+)*$/;
       if (value === '' || tagsRegex.test(value)) {
         setTagsError('');
@@ -37,7 +39,7 @@ const CreatePost = () => {
     }
     setIsLoading(true);
     try {
-      const response = await axios.post('https://backendforpost.onrender.com', {
+      const response = await axios.post(API_URL, {
         ...formData,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       });
@@ -47,7 +49,8 @@ const CreatePost = () => {
       setPosts([response.data.post, ...posts]);
       setShowPosts(true);
     } catch (error) {
-      setMessage(error.response?.data?.error || 'Failed to create post');
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to create post. Please check the server.';
+      setMessage(errorMessage);
       setIsError(true);
     } finally {
       setIsLoading(false);
