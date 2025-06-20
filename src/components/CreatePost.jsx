@@ -37,7 +37,7 @@ const CreatePost = () => {
     }
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/posts', {
+      const response = await axios.post('https://backendforpost.onrender.com', {
         ...formData,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       });
